@@ -1,4 +1,4 @@
-module github.com/nekkkkitch/DatePB
+module github.com/nekkkkitch/DatePB/Auth
 
 go 1.24.0
 
