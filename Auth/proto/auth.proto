@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package Auth;
+
+option go_package = "";
+
+service Auth{
+    rpc Login(LoginInfo) returns(Tokens){};
+    rpc Register(LoginInfo) returns(Code){};
+    rpc ConfirmEmail(ConfirmCode) returns(Tokens){};
+    rpc RefreshTokens(Tokens) returns(Tokens){};
+    rpc ChangePassword(NewPassword) returns(Tokens){};
+}
+
+message LoginInfo{
+    string email = 1;
+    string password = 2;
+}
+
+message ConfirmCode{
+    string email = 1;
+    string code = 2;
+}
+
+message NewPassword{
+    string oldPassword = 1;
+    string newPassword = 2;
+}
+
+message Tokens{
+    Status status = 1;
+    string AccessToken = 2;
+    string RefreshToken = 3;
+}
+
+message Code{
+    Status status = 1;
+    string code = 2;
+}
+
+message Status{
+    int32 status = 1;
+    string additionalMessage = 2;
+}
