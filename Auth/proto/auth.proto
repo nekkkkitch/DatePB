@@ -6,7 +6,7 @@ option go_package = "";
 
 service Auth{
     rpc Login(LoginInfo) returns(Tokens){};
-    rpc Register(LoginInfo) returns(Code){};
+    rpc Register(LoginInfo) returns(Status){};
     rpc ConfirmEmail(ConfirmCode) returns(Tokens){};
     rpc RefreshTokens(Tokens) returns(Tokens){};
     rpc ChangePassword(NewPassword) returns(Tokens){};
