@@ -19,8 +19,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
 	Login(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Tokens, error)
-	Register(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Status, error)
-	ConfirmEmail(ctx context.Context, in *ConfirmCode, opts ...grpc.CallOption) (*Tokens, error)
+	Register(ctx context.Context, in *EmailToConfirm, opts ...grpc.CallOption) (*Status, error)
+	ConfirmEmail(ctx context.Context, in *ConfirmRegister, opts ...grpc.CallOption) (*Tokens, error)
 	RefreshTokens(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*Tokens, error)
 	ChangePassword(ctx context.Context, in *NewPassword, opts ...grpc.CallOption) (*Tokens, error)
 }
@@ -42,7 +42,7 @@ func (c *authClient) Login(ctx context.Context, in *LoginInfo, opts ...grpc.Call
 	return out, nil
 }
 
-func (c *authClient) Register(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Status, error) {
+func (c *authClient) Register(ctx context.Context, in *EmailToConfirm, opts ...grpc.CallOption) (*Status, error) {
 	out := new(Status)
 	err := c.cc.Invoke(ctx, "/Auth.Auth/Register", in, out, opts...)
 	if err != nil {
@@ -51,7 +51,7 @@ func (c *authClient) Register(ctx context.Context, in *LoginInfo, opts ...grpc.C
 	return out, nil
 }
 
-func (c *authClient) ConfirmEmail(ctx context.Context, in *ConfirmCode, opts ...grpc.CallOption) (*Tokens, error) {
+func (c *authClient) ConfirmEmail(ctx context.Context, in *ConfirmRegister, opts ...grpc.CallOption) (*Tokens, error) {
 	out := new(Tokens)
 	err := c.cc.Invoke(ctx, "/Auth.Auth/ConfirmEmail", in, out, opts...)
 	if err != nil {
@@ -83,8 +83,8 @@ func (c *authClient) ChangePassword(ctx context.Context, in *NewPassword, opts .
 // for forward compatibility
 type AuthServer interface {
 	Login(context.Context, *LoginInfo) (*Tokens, error)
-	Register(context.Context, *LoginInfo) (*Status, error)
-	ConfirmEmail(context.Context, *ConfirmCode) (*Tokens, error)
+	Register(context.Context, *EmailToConfirm) (*Status, error)
+	ConfirmEmail(context.Context, *ConfirmRegister) (*Tokens, error)
 	RefreshTokens(context.Context, *Tokens) (*Tokens, error)
 	ChangePassword(context.Context, *NewPassword) (*Tokens, error)
 	mustEmbedUnimplementedAuthServer()
@@ -97,10 +97,10 @@ type UnimplementedAuthServer struct {
 func (UnimplementedAuthServer) Login(context.Context, *LoginInfo) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServer) Register(context.Context, *LoginInfo) (*Status, error) {
+func (UnimplementedAuthServer) Register(context.Context, *EmailToConfirm) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedAuthServer) ConfirmEmail(context.Context, *ConfirmCode) (*Tokens, error) {
+func (UnimplementedAuthServer) ConfirmEmail(context.Context, *ConfirmRegister) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmEmail not implemented")
 }
 func (UnimplementedAuthServer) RefreshTokens(context.Context, *Tokens) (*Tokens, error) {
@@ -141,7 +141,7 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 }
 
 func _Auth_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginInfo)
+	in := new(EmailToConfirm)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -153,13 +153,13 @@ func _Auth_Register_Handler(srv interface{}, ctx context.Context, dec func(inter
 		FullMethod: "/Auth.Auth/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).Register(ctx, req.(*LoginInfo))
+		return srv.(AuthServer).Register(ctx, req.(*EmailToConfirm))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Auth_ConfirmEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmCode)
+	in := new(ConfirmRegister)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ func _Auth_ConfirmEmail_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/Auth.Auth/ConfirmEmail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).ConfirmEmail(ctx, req.(*ConfirmCode))
+		return srv.(AuthServer).ConfirmEmail(ctx, req.(*ConfirmRegister))
 	}
 	return interceptor(ctx, in, info, handler)
 }
