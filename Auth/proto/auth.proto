@@ -6,8 +6,8 @@ option go_package = "";
 
 service Auth{
     rpc Login(LoginInfo) returns(Tokens){};
-    rpc Register(EmailToConfirm) returns(Status){};
-    rpc ConfirmEmail(ConfirmRegister) returns(Tokens){};
+    rpc Register(LoginInfo) returns(Status){};
+    rpc ConfirmEmail(ConfirmCode) returns(Tokens){};
     rpc RefreshTokens(Tokens) returns(Tokens){};
     rpc ChangePassword(NewPassword) returns(Tokens){};
 }
@@ -17,15 +17,9 @@ message LoginInfo{
     string password = 2;
 }
 
-message EmailToConfirm{
+message ConfirmCode{
     string email = 1;
     string code = 2;
-}
-
-message ConfirmRegister{
-    string email = 1;
-    string password = 2;
-    string code = 3;
 }
 
 message NewPassword{
