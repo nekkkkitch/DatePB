@@ -19,7 +19,6 @@ message LoginInfo{
 
 message EmailToConfirm{
     string email = 1;
-    string code = 2;
 }
 
 message ConfirmRegister{
@@ -29,8 +28,9 @@ message ConfirmRegister{
 }
 
 message NewPassword{
-    string oldPassword = 1;
-    string newPassword = 2;
+    string token = 1;
+    string oldPassword = 2;
+    string newPassword = 3;
 }
 
 message Tokens{
