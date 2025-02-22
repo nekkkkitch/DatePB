@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
 	Login(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Tokens, error)
-	Register(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Code, error)
+	Register(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Status, error)
 	ConfirmEmail(ctx context.Context, in *ConfirmCode, opts ...grpc.CallOption) (*Tokens, error)
 	RefreshTokens(ctx context.Context, in *Tokens, opts ...grpc.CallOption) (*Tokens, error)
 	ChangePassword(ctx context.Context, in *NewPassword, opts ...grpc.CallOption) (*Tokens, error)
@@ -42,8 +42,8 @@ func (c *authClient) Login(ctx context.Context, in *LoginInfo, opts ...grpc.Call
 	return out, nil
 }
 
-func (c *authClient) Register(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Code, error) {
-	out := new(Code)
+func (c *authClient) Register(ctx context.Context, in *LoginInfo, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
 	err := c.cc.Invoke(ctx, "/Auth.Auth/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (c *authClient) ChangePassword(ctx context.Context, in *NewPassword, opts .
 // for forward compatibility
 type AuthServer interface {
 	Login(context.Context, *LoginInfo) (*Tokens, error)
-	Register(context.Context, *LoginInfo) (*Code, error)
+	Register(context.Context, *LoginInfo) (*Status, error)
 	ConfirmEmail(context.Context, *ConfirmCode) (*Tokens, error)
 	RefreshTokens(context.Context, *Tokens) (*Tokens, error)
 	ChangePassword(context.Context, *NewPassword) (*Tokens, error)
@@ -97,7 +97,7 @@ type UnimplementedAuthServer struct {
 func (UnimplementedAuthServer) Login(context.Context, *LoginInfo) (*Tokens, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedAuthServer) Register(context.Context, *LoginInfo) (*Code, error) {
+func (UnimplementedAuthServer) Register(context.Context, *LoginInfo) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedAuthServer) ConfirmEmail(context.Context, *ConfirmCode) (*Tokens, error) {
