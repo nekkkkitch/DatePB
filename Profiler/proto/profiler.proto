@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package Profiler;
+
+option go_package = "";
+
+service Profiler{
+    rpc ChangeName(Name) returns(Status){};
+    rpc ChangeDesctipion(Description) returns(Status){};
+    rpc ChangeAge(Age) returns(Status){};
+    rpc ChangeTown(Town) returns(Status){};
+    rpc UpdateLocation(Location) returns(Status){};
+    rpc ChangeHobbies(Hobbies) returns(Status){};
+    rpc UploadPhoto(Photo) returns(Status){};
+    rpc DeletePhoto(PhotoID) returns(Status){};
+    rpc ChangePreferredAge(AgePrefs) returns(Status){};
+    rpc ChangePreferredRadius(Radius) returns(Status){};
+}
+
+message Name{
+    bytes id = 1;
+    string name = 2;
+}
+
+message Description{
+    bytes id = 1;
+    string description = 2;
+}
+
+message Age{
+    bytes id = 1;
+    int32 age = 2;
+}
+
+message Town{
+    bytes id = 1;
+    string town = 2;
+}
+
+message Location{
+    bytes id = 1;
+    float lat = 2;
+    float lon = 3;
+}
+
+message Hobbies{
+    bytes id = 1;
+    bytes hobbies = 2;
+}
+
+message Photo{
+    bytes id = 1;
+    bytes photo = 2;
+}
+
+message PhotoID{
+    bytes id = 1;
+    bytes photoID = 2;
+}
+
+message AgePrefs{
+    bytes id = 1;
+    int32 min = 2;
+    int32 max = 3;
+}
+
+message Radius{
+    bytes id = 1;
+    int32 radius = 2;
+}
+
+message Status{
+    int32 status = 1;
+    string additionalMessage = 2;
+}
