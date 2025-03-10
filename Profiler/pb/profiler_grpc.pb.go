@@ -28,6 +28,7 @@ type ProfilerClient interface {
 	DeletePhoto(ctx context.Context, in *PhotoID, opts ...grpc.CallOption) (*Status, error)
 	ChangePreferredAge(ctx context.Context, in *AgePrefs, opts ...grpc.CallOption) (*Status, error)
 	ChangePreferredRadius(ctx context.Context, in *Radius, opts ...grpc.CallOption) (*Status, error)
+	GetProfile(ctx context.Context, in *ProfileID, opts ...grpc.CallOption) (*Profile, error)
 }
 
 type profilerClient struct {
@@ -128,6 +129,15 @@ func (c *profilerClient) ChangePreferredRadius(ctx context.Context, in *Radius, 
 	return out, nil
 }
 
+func (c *profilerClient) GetProfile(ctx context.Context, in *ProfileID, opts ...grpc.CallOption) (*Profile, error) {
+	out := new(Profile)
+	err := c.cc.Invoke(ctx, "/Profiler.Profiler/GetProfile", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProfilerServer is the server API for Profiler service.
 // All implementations must embed UnimplementedProfilerServer
 // for forward compatibility
@@ -142,6 +152,7 @@ type ProfilerServer interface {
 	DeletePhoto(context.Context, *PhotoID) (*Status, error)
 	ChangePreferredAge(context.Context, *AgePrefs) (*Status, error)
 	ChangePreferredRadius(context.Context, *Radius) (*Status, error)
+	GetProfile(context.Context, *ProfileID) (*Profile, error)
 	mustEmbedUnimplementedProfilerServer()
 }
 
@@ -178,6 +189,9 @@ func (UnimplementedProfilerServer) ChangePreferredAge(context.Context, *AgePrefs
 }
 func (UnimplementedProfilerServer) ChangePreferredRadius(context.Context, *Radius) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePreferredRadius not implemented")
+}
+func (UnimplementedProfilerServer) GetProfile(context.Context, *ProfileID) (*Profile, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProfile not implemented")
 }
 func (UnimplementedProfilerServer) mustEmbedUnimplementedProfilerServer() {}
 
@@ -372,6 +386,24 @@ func _Profiler_ChangePreferredRadius_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Profiler_GetProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProfileID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProfilerServer).GetProfile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Profiler.Profiler/GetProfile",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProfilerServer).GetProfile(ctx, req.(*ProfileID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Profiler_ServiceDesc is the grpc.ServiceDesc for Profiler service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -418,6 +450,10 @@ var Profiler_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePreferredRadius",
 			Handler:    _Profiler_ChangePreferredRadius_Handler,
+		},
+		{
+			MethodName: "GetProfile",
+			Handler:    _Profiler_GetProfile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
