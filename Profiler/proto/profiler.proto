@@ -12,7 +12,7 @@ service Profiler{
     rpc UpdateLocation(Location) returns(Status){};
     rpc ChangeHobbies(Hobbies) returns(Status){};
     rpc UploadPhoto(Photo) returns(Status){};
-    rpc DeletePhoto(PhotoID) returns(Status){};
+    rpc DeletePhoto(PhotoHash) returns(Status){};
     rpc ChangePreferredAge(AgePrefs) returns(Status){};
     rpc ChangePreferredRadius(Radius) returns(Status){};
     rpc GetProfile(ProfileID) returns(Profile){};
@@ -54,9 +54,9 @@ message Photo{
     bytes photo = 2;
 }
 
-message PhotoID{
+message PhotoHash{
     bytes id = 1;
-    bytes photoID = 2;
+    string photoHash = 2;
 }
 
 message AgePrefs{
@@ -77,12 +77,7 @@ message ProfileID{
 
 message Profile{
     Status status = 1;
-    string name = 2;
-    string description = 3;
-    string age = 4;
-    string town = 5;
-    bytes hobbies = 6;
-    bytes photos = 7;
+    bytes profile = 2;
 }
 
 message Status{

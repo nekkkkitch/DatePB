@@ -25,7 +25,7 @@ type ProfilerClient interface {
 	UpdateLocation(ctx context.Context, in *Location, opts ...grpc.CallOption) (*Status, error)
 	ChangeHobbies(ctx context.Context, in *Hobbies, opts ...grpc.CallOption) (*Status, error)
 	UploadPhoto(ctx context.Context, in *Photo, opts ...grpc.CallOption) (*Status, error)
-	DeletePhoto(ctx context.Context, in *PhotoID, opts ...grpc.CallOption) (*Status, error)
+	DeletePhoto(ctx context.Context, in *PhotoHash, opts ...grpc.CallOption) (*Status, error)
 	ChangePreferredAge(ctx context.Context, in *AgePrefs, opts ...grpc.CallOption) (*Status, error)
 	ChangePreferredRadius(ctx context.Context, in *Radius, opts ...grpc.CallOption) (*Status, error)
 	GetProfile(ctx context.Context, in *ProfileID, opts ...grpc.CallOption) (*Profile, error)
@@ -102,7 +102,7 @@ func (c *profilerClient) UploadPhoto(ctx context.Context, in *Photo, opts ...grp
 	return out, nil
 }
 
-func (c *profilerClient) DeletePhoto(ctx context.Context, in *PhotoID, opts ...grpc.CallOption) (*Status, error) {
+func (c *profilerClient) DeletePhoto(ctx context.Context, in *PhotoHash, opts ...grpc.CallOption) (*Status, error) {
 	out := new(Status)
 	err := c.cc.Invoke(ctx, "/Profiler.Profiler/DeletePhoto", in, out, opts...)
 	if err != nil {
@@ -149,7 +149,7 @@ type ProfilerServer interface {
 	UpdateLocation(context.Context, *Location) (*Status, error)
 	ChangeHobbies(context.Context, *Hobbies) (*Status, error)
 	UploadPhoto(context.Context, *Photo) (*Status, error)
-	DeletePhoto(context.Context, *PhotoID) (*Status, error)
+	DeletePhoto(context.Context, *PhotoHash) (*Status, error)
 	ChangePreferredAge(context.Context, *AgePrefs) (*Status, error)
 	ChangePreferredRadius(context.Context, *Radius) (*Status, error)
 	GetProfile(context.Context, *ProfileID) (*Profile, error)
@@ -181,7 +181,7 @@ func (UnimplementedProfilerServer) ChangeHobbies(context.Context, *Hobbies) (*St
 func (UnimplementedProfilerServer) UploadPhoto(context.Context, *Photo) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadPhoto not implemented")
 }
-func (UnimplementedProfilerServer) DeletePhoto(context.Context, *PhotoID) (*Status, error) {
+func (UnimplementedProfilerServer) DeletePhoto(context.Context, *PhotoHash) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePhoto not implemented")
 }
 func (UnimplementedProfilerServer) ChangePreferredAge(context.Context, *AgePrefs) (*Status, error) {
@@ -333,7 +333,7 @@ func _Profiler_UploadPhoto_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 func _Profiler_DeletePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PhotoID)
+	in := new(PhotoHash)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -345,7 +345,7 @@ func _Profiler_DeletePhoto_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/Profiler.Profiler/DeletePhoto",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProfilerServer).DeletePhoto(ctx, req.(*PhotoID))
+		return srv.(ProfilerServer).DeletePhoto(ctx, req.(*PhotoHash))
 	}
 	return interceptor(ctx, in, info, handler)
 }
